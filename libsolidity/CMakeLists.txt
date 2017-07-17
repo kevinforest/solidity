@@ -90,6 +90,7 @@ set(sources
 	interface/GasEstimator.h
 	interface/Natspec.cpp
 	interface/Natspec.h
+	interface/OptimiserSettings.h
 	interface/ReadFile.h
 	interface/StandardCompiler.cpp
 	interface/StandardCompiler.h

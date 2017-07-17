@@ -114,8 +114,7 @@ void CompilerStack::reset(bool _keepSources)
 	m_unhandledSMTLib2Queries.clear();
 	m_libraries.clear();
 	m_evmVersion = EVMVersion();
-	m_optimize = false;
-	m_optimizeRuns = 200;
+	m_optimiserSettings = OptimiserSettings::minimal();
 	m_globalContext.reset();
 	m_scopes.clear();
 	m_sourceOrder.clear();
@@ -809,7 +808,7 @@ void CompilerStack::compileContract(
 
 	Contract& compiledContract = m_contracts.at(_contract.fullyQualifiedName());
 
-	shared_ptr<Compiler> compiler = make_shared<Compiler>(m_evmVersion, m_optimize, m_optimizeRuns);
+	shared_ptr<Compiler> compiler = make_shared<Compiler>(m_evmVersion, m_optimiserSettings);
 	compiledContract.compiler = compiler;
 
 	string metadata = createMetadata(compiledContract);
@@ -922,8 +921,30 @@ string CompilerStack::createMetadata(Contract const& _contract) const
 			meta["sources"][s.first]["urls"].append("bzzr://" + toHex(s.second.swarmHash().asBytes()));
 		}
 	}
-	meta["settings"]["optimizer"]["enabled"] = m_optimize;
-	meta["settings"]["optimizer"]["runs"] = m_optimizeRuns;
+	/// Backwards compatibility
+	/// TODO The point of this is backwards compatibility, but people might misunderstand
+	/// this to be a "master override".
+	meta["settings"]["optimizer"]["enabled"] =
+	(
+		m_optimiserSettings.runDeduplicate &&
+		m_optimiserSettings.runCSE &&
+		m_optimiserSettings.runOrderLiterals &&
+		m_optimiserSettings.runConstantOptimiser
+	);
+	static_assert(sizeof(m_optimiserSettings.expectedExecutionsPerDeployment) <= sizeof(Json::LargestUInt));
+	solAssert(static_cast<Json::LargestUInt>(m_optimiserSettings.expectedExecutionsPerDeployment) < std::numeric_limits<Json::LargestUInt>::max(), "");
+	meta["settings"]["optimizer"]["runs"] = Json::Value(Json::LargestUInt(m_optimiserSettings.expectedExecutionsPerDeployment));
+
+	meta["settings"]["optimizer"]["orderLiterals"] = m_optimiserSettings.runOrderLiterals;
+	meta["settings"]["optimizer"]["jumpdestRemover"] = m_optimiserSettings.runJumpdestRemover;
+	meta["settings"]["optimizer"]["peephole"] = m_optimiserSettings.runPeephole;
+	meta["settings"]["optimizer"]["deduplicate"] = m_optimiserSettings.runDeduplicate;
+	meta["settings"]["optimizer"]["cse"] = m_optimiserSettings.runCSE;
+	// We used "z" in the past in the standard-json, so we use "constantOptimi_z_er".
+	meta["settings"]["optimizer"]["constantOptimizer"] = m_optimiserSettings.runConstantOptimiser;
+	meta["settings"]["optimizer"]["yul"] = m_optimiserSettings.runYulOptimiser;
+	meta["settings"]["optimizer"]["expectedExecutionsPerDeployment"] = Json::Value(Json::LargestUInt(m_optimiserSettings.expectedExecutionsPerDeployment));
+
 	meta["settings"]["evmVersion"] = m_evmVersion.name();
 	meta["settings"]["compilationTarget"][_contract.contract->sourceUnitName()] =
 		_contract.contract->annotation().canonicalName;
