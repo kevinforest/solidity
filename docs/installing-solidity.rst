@@ -228,6 +228,28 @@ in Visual Studio 2017 Build Tools or Visual Studio 2017:
 .. _Visual Studio 2017: https://www.visualstudio.com/vs/
 .. _Visual Studio 2017 Build Tools: https://www.visualstudio.com/downloads/#build-tools-for-visual-studio-2017
 
+Prerequisites - OpenBSD
+-----------------------
+
+You need to install the following dependencies for OpenBSD builds of Solidity:
+
++-----------------------------------+-------------------------------------------------------+
+| Software                          | Notes                                                 |
++===================================+=======================================================+
+| `CMake`_                          | Cross-platform build file generator.                  |
++-----------------------------------+-------------------------------------------------------+
+| `Boost`_                          | C++ libraries.                                        |
++-----------------------------------+-------------------------------------------------------+
+| `Git for Linux and Unix`_         | Command-line tool for retrieving source from Github.  |
++-----------------------------------+-------------------------------------------------------+
+
+.. _Git for Linux and Unix: https://git-scm.com/download/linux
+.. _Boost: https://www.boost.org
+
+.. warning::
+
+    BSD builds should work, but are untested by the Solidity team.
+
 Clone the Repository
 --------------------
 
@@ -278,12 +300,16 @@ Building Solidity is quite similar on Linux, macOS and other Unices:
     cd build
     cmake .. && make
 
-or even easier:
+or even easier on Linux and macOS, you can run:
 
 .. code-block:: bash
 
     #note: this will install binaries solc and soltest at usr/local/bin
     ./scripts/build.sh
+
+.. warning::
+
+    BSD builds should work, but are untested by the Solidity team.
 
 And for Windows:
 
