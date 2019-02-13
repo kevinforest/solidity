@@ -1967,7 +1967,7 @@ void ExpressionCompiler::appendExternalFunctionCall(
 	// pointer on the stack).
 	bool encodeInPlace = _functionType.takesArbitraryParameters() || _functionType.isBareCall();
 	if (_functionType.kind() == FunctionType::Kind::ECRecover)
-		// This would the only combination of padding and in-place encoding,
+		// This would be the only combination of padding and in-place encoding,
 		// but all parameters of ecrecover are value types anyway.
 		encodeInPlace = false;
 	utils().encodeToMemory(
