@@ -7,6 +7,7 @@ Compiler Features:
 
 
 Bugfixes:
+ * Code generator: Fixed internal compiler error related to ABIEncoderV2 and ecrecover.
 
 
 Build System:
