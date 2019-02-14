@@ -164,13 +164,16 @@ The following are dependencies for all builds of Solidity:
 +===================================+=======================================================+
 | `CMake`_                          | Cross-platform build file generator.                  |
 +-----------------------------------+-------------------------------------------------------+
-| `Boost`_  (version 1.65 or newer)                    | C++ libraries.                                        |
+| `Boost`_  (version 1.65+)         | C++ libraries.                                        |
 +-----------------------------------+-------------------------------------------------------+
 | `Git`_                            | Command-line tool for retrieving source code.         |
 +-----------------------------------+-------------------------------------------------------+
-| `z3`_ (Optional)                  | For use with SMT checker.                             |
+| `z3`_ (version 5.6+, Optional)    | For use with SMT checker.                             |
++-----------------------------------+-------------------------------------------------------+
+| `cvc4`_ (Optional)                | For use with SMT checker.                             |
 +-----------------------------------+-------------------------------------------------------+
 
+.. _cvc4: http://cvc4.cs.stanford.edu/web/
 .. _Git: https://git-scm.com/download
 .. _Boost: https://www.boost.org
 .. _CMake: https://cmake.org/download/
