@@ -88,6 +88,7 @@ namespace langutil
 	/* Assignment operators. */										\
 	/* IsAssignmentOp() relies on this block of enum values being */	\
 	/* contiguous and sorted in the same order!*/						\
+	T(AssemblyAssign, ":=", 2)                                                   \
 	T(Assign, "=", 2)                                                   \
 	/* The following have to be in exactly the same order as the simple binary operators*/ \
 	T(AssignBitOr, "|=", 2)                                           \

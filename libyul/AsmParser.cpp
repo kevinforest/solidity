@@ -158,22 +158,21 @@ Statement Parser::parseStatement()
 		}
 		while (currentToken() == Token::Comma);
 
-		expectToken(Token::Colon);
-		expectToken(Token::Assign);
+		expectToken(Token::AssemblyAssign);
 
 		assignment.value.reset(new Expression(parseExpression()));
 		assignment.location.end = locationOf(*assignment.value).end;
 		return Statement{std::move(assignment)};
 	}
+	case Token::AssemblyAssign:
 	case Token::Colon:
 	{
 		if (elementary.type() != typeid(Identifier))
 			fatalParserError("Label name / variable name must precede \":\".");
 		Identifier const& identifier = boost::get<Identifier>(elementary);
-		advance();
 		// identifier:=: should be parsed as identifier: =: (i.e. a label),
 		// while identifier:= (being followed by a non-colon) as identifier := (assignment).
-		if (currentToken() == Token::Assign && peekNextToken() != Token::Colon)
+		if (currentToken() == Token::AssemblyAssign && peekNextToken() != Token::Colon)
 		{
 			Assignment assignment = createWithLocation<Assignment>(identifier.location);
 			if (m_dialect->builtin(identifier.name))
@@ -188,6 +187,9 @@ Statement Parser::parseStatement()
 		}
 		else
 		{
+			if (currentToken() == Token::Colon)
+				advance();
+
 			// label
 			if (m_dialect->flavour != AsmFlavour::Loose)
 				fatalParserError("Labels are not supported.");
@@ -439,10 +441,9 @@ VariableDeclaration Parser::parseVariableDeclaration()
 		else
 			break;
 	}
-	if (currentToken() == Token::Colon)
+	if (currentToken() == Token::AssemblyAssign)
 	{
-		expectToken(Token::Colon);
-		expectToken(Token::Assign);
+		expectToken(Token::AssemblyAssign);
 		varDecl.value = make_unique<Expression>(parseExpression());
 		varDecl.location.end = locationOf(*varDecl.value).end;
 	}
